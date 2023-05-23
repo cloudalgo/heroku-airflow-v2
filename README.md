@@ -1,7 +1,6 @@
 # heroku-airflow
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/cloudalgo/heroku-airflow-v2)
 Deploy [Airflow](https://airflow.apache.org/) to [Heroku](https://www.heroku.com/). Read the [blog post](https://remarkablemark.org/blog/2022/07/13/deploy-airflow-to-heroku/).
 
 ## Stack
