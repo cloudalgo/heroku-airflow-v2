@@ -43,16 +43,13 @@
   },
   "formation": {
     "web": {
-      "quantity": 1,
-      "size": "hobby"
+      "quantity": 1
     },
     "worker": {
-      "quantity": 1,
-      "size": "hobby"
+      "quantity": 1
     },
     "scheduler": {
-      "quantity": 1,
-      "size": "hobby"
+      "quantity": 1
     }
   },
   "scripts": {
