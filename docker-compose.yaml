@@ -69,6 +69,18 @@ x-airflow-common: &airflow-common
       condition: service_healthy
 
 services:
+  db1:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: sample1
+      POSTGRES_PASSWORD: sample1
+      POSTGRES_DB: sample
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres-db1-volume:/var/lib/postgresql/data
+    restart: always
+
   postgres:
     image: postgres:13
     environment:
@@ -281,3 +293,4 @@ services:
 
 volumes:
   postgres-db-volume:
+  postgres-db1-volume:
