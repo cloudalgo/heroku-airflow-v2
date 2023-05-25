@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 import json
 import logging
 import os
+from psycopg2.extras import execute_values
 
 CUR_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -36,10 +37,10 @@ dag = DAG(
 )
 
 # Function to extract data from the source database
-def extract_data(source_conn, source_table):
-    logging.info(f"Extracting data from {source_table} table...")
+def extract_data(source_conn, source_schema, source_table):
+    logging.info(f"Extracting data from {source_schema}.{source_table} table...")
     hook = PostgresHook(postgres_conn_id=source_conn)
-    sql = f'SELECT * FROM {source_table};'
+    sql = f'SELECT * FROM {source_schema}.{source_table};'
     connection = hook.get_conn()
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -60,35 +61,41 @@ def extract_data(source_conn, source_table):
 # Function to transform the extracted data
 def transform_data(data, column_mapping):
     logging.info("Transforming data...")
-    logging.info(column_mapping)
-    logging.info(data)
     transformed_data = []
     for row in data:
         transformed_row = []
-        for column in column_mapping:
-            source_column = column['source']
-            destination_column = column['destination']
+        for column_mapping_item in column_mapping:
+            source_column = column_mapping_item['source']
+            destination_column = column_mapping_item['destination']
             transformed_value = row[source_column]
             transformed_row.append(transformed_value)
-        transformed_data.append(tuple(transformed_row))
+        transformed_data.append(transformed_row)
     return transformed_data
 
 # Function to load the transformed data into the target database
-def load_data(target_conn, table_name, transformed_data):
-    logging.info(f"Loading data into {table_name} table...")
+def load_data(target_conn, target_schema, target_table, transformed_data, insert_columns):
+    logging.info(f"Loading data into {target_schema}.{target_table} table...")
+    logging.info(insert_columns)
     hook = PostgresHook(postgres_conn_id=target_conn)
     connection = hook.get_conn()
     cursor = connection.cursor()
-    # cursor.execute(f'TRUNCATE TABLE {table_name};')
-    hook.insert_rows(table_name, transformed_data)
+    # cursor.execute(f'TRUNCATE TABLE {target_schema}.{target_table};')
+
+    # Construct the insert statement with specified columns
+    # insert_statement = f'INSERT INTO {target_schema}.{target_table} ({", ".join(insert_columns)}) VALUES %s'
+    
+    # Execute the insert statement with transformed data
+    # hook.insert_rows(table=f'{target_schema}.{target_table}', rows=transformed_data, insert_statement=insert_statement)
+    
+    # Generate the insert SQL statement with specified columns
+    insert_sql = f'INSERT INTO {target_schema}.{target_table} ({", ".join(insert_columns)}) VALUES %s'
+    
+    # Execute the insert statement with transformed data
+    execute_values(cursor, insert_sql, transformed_data)
+
+    connection.commit()
     cursor.close()
     connection.close()
-
-# Function to read the column mapping JSON file
-def read_column_mapping(file_path):
-    with open(file_path) as f:
-        column_mapping = json.load(f)
-    return column_mapping
 
 # Function to read the table mapping JSON file
 def read_table_mappings(file_path):
@@ -97,19 +104,19 @@ def read_table_mappings(file_path):
     return table_mappings
 
 # Function to transfer data for a specific table
-def transfer_table_data(source_conn, source_table, target_conn, target_table, column_mapping):
-    logging.info(f"Transfer process started for {source_table} table to {target_table} table.")
+def transfer_table_data(source_conn, source_schema, source_table, target_conn, target_schema, target_table, column_mapping, insert_columns):
+    logging.info(f"Transfer process started for {source_schema}.{source_table} table to {target_schema}.{target_table} table.")
     
-    # Step 1: Extract data from source database
-    data = extract_data(source_conn, source_table)
-    
+    # Step 1: Extract data from the source table
+    data = extract_data(source_conn, source_schema, source_table)
+
     # Step 2: Transform the extracted data
     transformed_data = transform_data(data, column_mapping)
-    
-    # Step 3: Load the transformed data into the target database
-    load_data(target_conn, target_table, transformed_data)
-    
-    logging.info(f"Transfer process completed for {source_table} table to {target_table} table.")
+
+    # Step 3: Load the transformed data into the target table
+    load_data(target_conn, target_schema, target_table, transformed_data, insert_columns)
+
+    logging.info(f"Transfer process completed for {source_schema}.{source_table} table to {target_schema}.{target_table} table.")
 
 # Define the path to the table mappings JSON file
 table_mappings_file = f'{CUR_DIR}/mapping/table_mappings.json'
@@ -122,24 +129,32 @@ with DAG(
     default_args=default_args,
     schedule_interval=None
 ) as dag:
-    source_conn = 'postgres_default'
-    target_conn = 'postgres_default'
 
     previous_task = None  # Initialize the previous_task variable
 
-    for source_table, target_table in table_mappings.items():
-        column_mapping = read_column_mapping(f'{CUR_DIR}/mapping/{source_table}_mapping.json')
+    for mapping in table_mappings:
+        source_conn = mapping['source_conn']
+        source_schema = mapping['source_schema']
+        source_table = mapping['source_table']
+        target_conn = mapping['target_conn']
+        target_schema = mapping['target_schema']
+        target_table = mapping['target_table']
+        column_mapping = mapping['column_mapping']
+        insert_columns = [column['destination'] for column in column_mapping]  # Get the destination columns for insert statement
 
         # Define a task for transferring data for each table
         transfer_task = PythonOperator(
-            task_id=f'transfer_data_{source_table}_to_{target_table}',
+            task_id=f'transfer_data_{source_schema}_{source_table}_to_{target_schema}_{target_table}',
             python_callable=transfer_table_data,
             op_kwargs={
                 'source_conn': source_conn,
+                'source_schema': source_schema,
                 'source_table': source_table,
                 'target_conn': target_conn,
+                'target_schema': target_schema,
                 'target_table': target_table,
-                'column_mapping': column_mapping
+                'column_mapping': column_mapping,
+                'insert_columns': insert_columns
             }
         )
 

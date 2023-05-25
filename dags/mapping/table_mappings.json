@@ -1,4 +1,24 @@
-{
-  "source_users": "users",
-  "source_posts": "posts"
-}
+[
+  {
+    "source_conn": "postgres_default",
+    "source_schema": "ebd",
+    "source_table": "account",
+    "target_conn": "postgres_default",
+    "target_schema": "mart",
+    "target_table": "account",
+    "column_mapping": [
+      {
+        "source": "ACCOUNT_ID",
+        "destination": "rbd_id__c"
+      },
+      {
+        "source": "ACCOUNT_NAME",
+        "destination": "name"
+      },
+      {
+        "source": "BILLING_CITY",
+        "destination": "billing_city_p__c"
+      }
+    ]
+  }
+]
