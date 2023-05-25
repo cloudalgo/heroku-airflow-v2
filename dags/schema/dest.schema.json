@@ -1,0 +1,63 @@
+{
+  "schemas": [
+    {
+      "name": "public",
+      "tables": [
+        {
+          "name": "users",
+          "columns": [
+            {
+              "name": "id",
+              "type": "serial",
+              "constraints": ["primary key"]
+            },
+            {
+              "name": "username1",
+              "type": "varchar(50)",
+              "constraints": ["not null"]
+            },
+            {
+              "name": "email",
+              "type": "varchar(100)",
+              "constraints": ["not null", "unique"]
+            },
+            {
+              "name": "password",
+              "type": "varchar(100)",
+              "constraints": ["not null"]
+            }
+          ]
+        },
+        {
+          "name": "posts",
+          "columns": [
+            {
+              "name": "id",
+              "type": "serial",
+              "constraints": ["primary key"]
+            },
+            {
+              "name": "title",
+              "type": "varchar(100)",
+              "constraints": ["not null"]
+            },
+            {
+              "name": "content",
+              "type": "text",
+              "constraints": ["not null"]
+            },
+            {
+              "name": "user_id",
+              "type": "integer",
+              "constraints": [
+                "not null",
+                "references users(id)",
+                "on delete cascade"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "source": "id",
+    "destination": "id"
+  },
+  {
+    "source": "title",
+    "destination": "title"
+  },
+  {
+    "source": "content",
+    "destination": "content"
+  },
+  {
+    "source": "user_id",
+    "destination": "user_id"
+  }
+]

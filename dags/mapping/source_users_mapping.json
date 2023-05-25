@@ -1,0 +1,14 @@
+[
+  {
+    "source": "id",
+    "destination": "id"
+  },
+  {
+    "source": "username",
+    "destination": "username"
+  },
+  {
+    "source": "email",
+    "destination": "email"
+  }
+]
