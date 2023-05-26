@@ -1,0 +1,36 @@
+{
+  "table_processes": [
+    {
+      "source_table": {
+        "connection_id": "source_db_conn",
+        "schema": "public",
+        "name": "source_table"
+      },
+      "destination_table": {
+        "connection_id": "destination_db_conn",
+        "schema": "public",
+        "name": "destination_table"
+      },
+      "validation_fields": [
+        {
+          "name": "id",
+          "type": "integer"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "min_length": 1,
+          "max_length": 100
+        },
+        {
+          "name": "email",
+          "type": "email"
+        },
+        {
+          "name": "phone",
+          "type": "phone_number"
+        }
+      ]
+    }
+  ]
+}

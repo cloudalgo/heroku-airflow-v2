@@ -1,0 +1,58 @@
+{
+  "tables": [
+    {
+      "source": {
+        "connection_id": "your_source_connection_id",
+        "schema_name": "your_source_schema_name",
+        "table_name": "your_source_table_name"
+      },
+      "destination": {
+        "connection_id": "your_destination_connection_id",
+        "schema_name": "your_destination_schema_name",
+        "table_name": "your_destination_table_name"
+      },
+      "fields": [
+        {
+          "name": "field1",
+          "enable_fuzzy_logic": true
+        },
+        {
+          "name": "field2",
+          "enable_fuzzy_logic": false
+        },
+        {
+          "name": "field3",
+          "enable_fuzzy_logic": true
+        }
+      ],
+      "similarity_threshold": 0.8
+    },
+    {
+      "source": {
+        "connection_id": "your_source_connection_id",
+        "schema_name": "your_source_schema_name",
+        "table_name": "your_source_table_name"
+      },
+      "destination": {
+        "connection_id": "your_destination_connection_id",
+        "schema_name": "your_destination_schema_name",
+        "table_name": "your_destination_table_name"
+      },
+      "fields": [
+        {
+          "name": "field4",
+          "enable_fuzzy_logic": true
+        },
+        {
+          "name": "field5",
+          "enable_fuzzy_logic": true
+        },
+        {
+          "name": "field6",
+          "enable_fuzzy_logic": false
+        }
+      ],
+      "similarity_threshold": 0.9
+    }
+  ]
+}
