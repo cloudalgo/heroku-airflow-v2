@@ -22,6 +22,6 @@
     ],
     "created_at": "created_at",
     "modified_at": "modified_at",
-    "primary_key": "id"
+    "primary_key": "rbd_id__c"
   }
 ]
