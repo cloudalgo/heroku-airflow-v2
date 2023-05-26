@@ -2,32 +2,28 @@
   "table_processes": [
     {
       "source_table": {
-        "connection_id": "source_db_conn",
-        "schema": "public",
-        "name": "source_table"
+        "connection_id": "postgres_default",
+        "schema": "ebd",
+        "name": "account"
       },
       "destination_table": {
-        "connection_id": "destination_db_conn",
+        "connection_id": "postgres_default",
         "schema": "public",
         "name": "destination_table"
       },
       "validation_fields": [
         {
-          "name": "id",
+          "name": "ACCOUNT_ID",
           "type": "integer"
         },
         {
-          "name": "name",
+          "name": "ACCOUNT_NAME",
           "type": "string",
           "min_length": 1,
           "max_length": 100
         },
         {
-          "name": "email",
-          "type": "email"
-        },
-        {
-          "name": "phone",
+          "name": "PHONE",
           "type": "phone_number"
         }
       ]

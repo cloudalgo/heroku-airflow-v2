@@ -169,9 +169,8 @@ table_mappings_file = f'{CUR_DIR}/mapping/table_mappings.json'
 table_mappings = read_table_mappings(table_mappings_file)
 
 with DAG(
-    dag_id='pg_data_transfer_1',
-    default_args=default_args,
-    schedule_interval=None
+    dag_id='pg_data_transfer',
+    default_args=default_args
 ) as dag:
 
     previous_task = None  # Initialize the previous_task variable
