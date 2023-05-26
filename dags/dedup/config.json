@@ -25,8 +25,9 @@
           "enable_fuzzy_logic": true
         }
       ],
-      "similarity_threshold": 0.8
+      "similarity_threshold": 0.8,
+      "primary_key": "ACCOUNT_ID"
     }
-
+    
   ]
 }
