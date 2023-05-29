@@ -1,0 +1,31 @@
+{
+  "connection_id": "your_connection_id",
+  "schema": "your_schema",
+  "input_table": "input_table_name",
+  "output_table": "output_table_name",
+  "field_mapping": {
+    "account": {
+      "columns": ["column1", "column2", "column3"],
+      "column_name": "joined_account",
+      "data_manipulation": ["uppercase"]
+    },
+    "amount": {
+      "column_name": "original_amount",
+      "data_manipulation": ["change_type:float", "round"],
+      "validation": {
+        "required": true,
+        "min_value": 0,
+        "max_value": 10000
+      }
+    },
+    "date": {
+      "column_name": "original_date",
+      "data_manipulation": ["format_date"],
+      "validation": {
+        "required": true,
+        "min_value": 0,
+        "max_value": 10000
+      }
+    }
+  }
+}
