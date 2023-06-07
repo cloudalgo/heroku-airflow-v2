@@ -1,11 +1,11 @@
 [
   {
     "source_type": "postgres",
-    "source_connection": "staging",
-    "source_schema": "srd",
-    "source_table": "account",
-    "dest_connection": "ods",
-    "dest_schema": "public",
-    "dest_table": "account"
+    "source_connection": "postgres_test",
+    "source_schema": "catalog",
+    "source_table": "films",
+    "dest_connection": "postgres_test",
+    "dest_schema": "dw",
+    "dest_table": "json_table"
   }
 ]

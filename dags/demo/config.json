@@ -1,36 +1,15 @@
 {
   "tables": [
     {
-      "source_conn_id": "source_postgres_conn",
-      "target_conn_id": "target_postgres_conn",
-      "source_table": "source_table_name",
-      "target_table": "target_table_name",
-      "source_schema": "source_schema_name",
-      "target_schema": "target_schema_name",
+      "source_conn_id": "postgres_test",
+      "target_conn_id": "postgres_test",
+      "source_table": "json_table",
+      "target_table": "json_films_table",
+      "source_schema": "dw",
+      "target_schema": "dw",
       "field_mapping": {
-        "source_field_1": {
-          "target_field": "target_field_1",
-          "validation": ["required", "min:0", "max:100"],
-          "manipulation": ["uppercase", "abs"]
-        },
-        "source_field_2": {
-          "target_field": "target_field_2",
-          "validation": ["required", "min_length:5", "max_length:10"],
-          "manipulation": ["round:2", "change_type:int"]
-        },
-        "source_field_3": {
-          "target_field": "target_field_3",
-          "validation": ["required"],
-          "manipulation": ["format_date:%Y-%m-%d", "change_type:date"]
-        },
-        "source_field_4": {
-          "target_field": "target_field_4",
-          "validation": ["required"],
-          "merge_columns": ["column1", "column2"]
-        },
-        "source_field_5": {
-          "target_field": "target_field_5",
-          "calculated_expression": "row['column3'] + row['column4']"
+        "data": {
+          "target_field": ["code", "title", "did", "date_prod"]
         }
       }
     }

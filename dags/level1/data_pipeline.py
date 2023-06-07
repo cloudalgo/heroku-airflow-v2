@@ -44,21 +44,26 @@ def load_data_from_csv(s3_bucket, s3_key):
 def transform_row_to_json(rows):
     transformed_rows = []
     for row in rows:
+        row = list(row)
+        row[-1] = row[-1].strftime(f'%m-%d-%Y, %H:%M:%S')
         transformed_row = {
-            'created_at': datetime.now().isoformat(),
-            'modified_at': datetime.now().isoformat(),
+            'created_at': datetime.now().strftime(f'%m-%d-%Y, %H:%M:%S'),
+            'modified_at': datetime.now().strftime(f'%m-%d-%Y, %H:%M:%S'),
             'data': row
         }
         transformed_rows.append(json.dumps(transformed_row))
     return transformed_rows
 
-def insert_rows_to_destination(connection_id, schema, rows, dest_table):
+def save_as_json(task_instance, **kwargs):
+    rows = task_instance.xcom_pull(task_ids=f'transform_{source_type}_to_json_{dest_table}')
     insert_sql = f"""
-        INSERT INTO {schema}.{dest_table} (created_at, modified_at, data)
+        INSERT INTO {dest_schema}.{dest_table} (created_at, modified_at, data)
         VALUES (%s, %s, %s)
     """
-    pg_hook = PostgresHook(postgres_conn_id=connection_id, schema=schema)
+    pg_hook = PostgresHook(postgres_conn_id=dest_connection)
     for row in rows:
+        row = eval(row)
+        row['data'] = str(row['data'])
         pg_hook.run(insert_sql, parameters=(row['created_at'], row['modified_at'], row['data']))
 
 # Load configuration from a JSON file
@@ -86,11 +91,13 @@ for config in config_data:
         dag=dag
     )
 
+
     insert_task = PythonOperator(
         task_id=f'insert_{source_type}_to_{dest_table}',
-        python_callable=insert_rows_to_destination,
-        op_kwargs={'connection_id': dest_connection, 'schema': dest_schema, 'rows': rows, 'dest_table': dest_table},
+        python_callable=save_as_json,
+        op_kwargs={'connection_id': dest_connection, 'schema': dest_schema, 'dest_table': dest_table, 'source_type' : source_type},
         dag=dag
     )
+
 
     transform_task >> insert_task
